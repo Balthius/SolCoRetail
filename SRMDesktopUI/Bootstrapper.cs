@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using SRMDesktopUI.Helpers;
 using SRMDesktopUI.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace SRMDesktopUI
 {
@@ -16,6 +18,11 @@ namespace SRMDesktopUI
         public Bootstrapper()
         {
             Initialize();
+
+            ConventionManager.AddElementConvention<PasswordBox>(
+                PasswordBoxHelper.BoundPasswordProperty,
+                "Password",
+                "PasswordChanged");
         }
         protected override void Configure()
         {
@@ -23,7 +30,11 @@ namespace SRMDesktopUI
 
             _container
                 .Singleton<IWindowManager, WindowManager>()
-                .Singleton<IEventAggregator, EventAggregator>();
+                .Singleton<IEventAggregator, EventAggregator>()
+                .Singleton<IApiHelper, ApiHelper>();
+
+
+
             //in our assembly get every type, that is a class, that ends in viewmodel, put it in a list, and then for each one
             //register each one to a container
             //auto-wires up all viewmodels. makes unit testing a little harder. good way to start though (MVP)
