@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using SRMDesktopUI.Library.Api;
 namespace SRMDesktopUI.ViewModels
 {
     public class LoginViewModel :Screen
@@ -39,17 +39,47 @@ namespace SRMDesktopUI.ViewModels
             }
         }
 
+
+        public bool IsErrorVisible
+        {
+            get 
+            {
+                bool output = false;
+                if (ErrorMessage?.Length > 0)
+                {
+                    output = true;
+                }
+
+                return output;
+            }
+        }
+
+
+        private string _errorMessage;
+
+        public string ErrorMessage
+        {
+            get { return _errorMessage; }
+            set
+            {
+                _errorMessage = value;
+                NotifyOfPropertyChange(() => IsErrorVisible);
+                NotifyOfPropertyChange(() => ErrorMessage);
+            }
+        }
+
+
         public bool CanLogIn
         {
             get
             {
-            bool output = false;
-            //this should validate user and pass. p-length needs to be checked from one central location 
-            if(UserName?.Length > 0 && Password?.Length > 0)
-            {
-                output = true;
-            }
-            return output;
+                bool output = false;
+                //this should validate user and pass. p-length needs to be checked from one central location 
+                if(UserName?.Length > 0 && Password?.Length > 0)
+                {
+                    output = true;
+                }
+                return output;
             }
         }
 
@@ -57,11 +87,13 @@ namespace SRMDesktopUI.ViewModels
         {
             try
             {
+                ErrorMessage = "";
                 var result = await _apiHelper.Authenticate(UserName, Password);
+                await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                ErrorMessage = ex.Message;
             }
         }
 
