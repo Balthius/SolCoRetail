@@ -1,5 +1,6 @@
 ﻿
 using SRMDesktopUI.Library.Models;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SRMDesktopUI.Library.Api
@@ -8,5 +9,7 @@ namespace SRMDesktopUI.Library.Api
     {
         Task<AuthenticatedUser> Authenticate(string username, string password);
         Task GetLoggedInUserInfo(string token);
+
+        HttpClient ApiClient { get; }
     }
 }

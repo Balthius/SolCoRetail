@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
-using TRMDataManager.Library.Models;
+using SRMDataManager.Library.Models;
 
 namespace SRMDataManager.Controllers
 {
@@ -16,7 +16,7 @@ namespace SRMDataManager.Controllers
         public UserModel GetById()
         {
             string userId = RequestContext.Principal.Identity.GetUserId();
-            UserData data = new UserData();
+            UserData data = new UserData();//obtained right from data-access layer
 
             return data.GetUserById(userId).First();
 
