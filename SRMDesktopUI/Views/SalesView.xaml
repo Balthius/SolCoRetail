@@ -34,13 +34,21 @@
                  MinHeight="200" MinWidth="150" SelectedItem="{Binding SelectedProduct}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
+
+                    <!--Product Container-->
                     <StackPanel Orientation="Vertical">
                         <TextBlock Text="{Binding ProductName}" />
+
+                        <!--Price + Quantity Container-->
                         <StackPanel Orientation="Horizontal">
+
+                            <!--Price-->
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Price: " FontSize="14" />
-                                <TextBlock Text="{Binding RetailPrice}" FontSize="14" />
+                                <TextBlock Text="{Binding RetailPrice, StringFormat='{}{0:C}'}" FontSize="14" />
                             </StackPanel>
+
+                            <!--Quantity-->
                             <StackPanel Orientation="Horizontal" Margin="5 0 0 0">
                                 <TextBlock Text="Qty: " FontSize="14"/>
                                 <TextBlock Text="{Binding QuantityInStock}" FontSize="14" />
@@ -60,7 +68,7 @@
         <StackPanel Orientation="Vertical" Grid.Column="1"
                     Grid.Row="2" Margin="20 0">
             <TextBlock Text ="Quantity" />
-            <TextBlock x:Name="ItemQuantity" MinWidth="100" Margin="0 0 0 10" />
+            <TextBox x:Name="ItemQuantity" MinWidth="100" Margin="0 0 0 10" />
             <Button x:Name="AddToCart" Content="Add To Cart" Margin="0 0 0 30"
                     Padding="5" />
             <Button x:Name="RemoveFromCart" Content="Remove From Cart" Padding="5" />

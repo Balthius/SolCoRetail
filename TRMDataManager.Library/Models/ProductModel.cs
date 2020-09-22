@@ -26,5 +26,7 @@ namespace SRMDataManager.Library.Models
         /// A rough estimate (since it has the possibility of getting off-kilter) of amount in stock
         /// </summary>
         public int QuantityInStock { get; set; }
+
+        public bool IsTaxable { get; set; }
     }
 }

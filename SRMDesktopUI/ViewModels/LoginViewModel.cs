@@ -12,8 +12,8 @@ namespace SRMDesktopUI.ViewModels
 {
     public class LoginViewModel :Screen
     {
-        private string _userName;
-        private string _password;
+        private string _userName = "josh.folsom@yahoo.com"; //this is TEMPORARY. use this only for testing
+        private string _password = "asuspepper77"; // do NOT let this go to production. and even if this did make it to production these value should not be valid
         private IApiHelper _apiHelper;
         private IEventAggregator _events;
         public LoginViewModel(IApiHelper apiHelper, IEventAggregator events)

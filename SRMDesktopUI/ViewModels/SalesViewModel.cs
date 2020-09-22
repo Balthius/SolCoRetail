@@ -15,12 +15,14 @@ namespace SRMDesktopUI.ViewModels
     {
         //Injected dependencies
         IProductEndpoint _productEndpoint;
+        ISaleEndpoint _saleEndpoint;
         IConfigHelper _configHelper;
 
-        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper)
+        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper, ISaleEndpoint saleEndpoint)
         {
             _productEndpoint = productEndpoint;
             _configHelper = configHelper;
+            _saleEndpoint = saleEndpoint;
         }
 
         protected override async void OnViewLoaded(object view)
@@ -60,7 +62,8 @@ namespace SRMDesktopUI.ViewModels
             set
             {
                 _selectedProduct = value;
-                NotifyOfPropertyChange (()=> SelectedProduct);
+                NotifyOfPropertyChange(() => SelectedProduct);
+                NotifyOfPropertyChange(() => CanAddToCart);
             }
         }
 
@@ -147,6 +150,19 @@ namespace SRMDesktopUI.ViewModels
             }
 
         }
+        public bool CanAddToCart
+        {
+            get
+            {
+                bool output = false;
+                if (ItemQuantity > 0 && SelectedProduct?.QuantityInStock >= ItemQuantity)
+                {
+                    output = true;
+                }
+
+                return output;
+            }
+        }
 
         public void AddToCart()
         {
@@ -171,31 +187,9 @@ namespace SRMDesktopUI.ViewModels
             SelectedProduct.QuantityInStock -= ItemQuantity;
             ItemQuantity = 1;
             NotifyOfPropertyChange(() => SubTotal);
-
             NotifyOfPropertyChange(() => Tax);
-
             NotifyOfPropertyChange(() => Total);
-        }
-        public bool CanAddToCart
-        {
-            get
-            {
-                bool output = false;
-                if(ItemQuantity > 0 && SelectedProduct?.QuantityInStock >= ItemQuantity)
-                {
-                    output = true;
-                }
-
-                return output;
-            }
-        }
-        public void RemoveFromCart()
-        {
-            NotifyOfPropertyChange(() => SubTotal);
-
-            NotifyOfPropertyChange(() => Tax);
-
-            NotifyOfPropertyChange(() => Total);
+            NotifyOfPropertyChange(() => CanCheckOut);
         }
         public bool CanRemoveFromCArt
         {
@@ -206,20 +200,42 @@ namespace SRMDesktopUI.ViewModels
                 return output;
             }
         }
-
-        public void CheckOut()
+        public void RemoveFromCart()
         {
-
+            NotifyOfPropertyChange(() => SubTotal);
+            NotifyOfPropertyChange(() => Tax);
+            NotifyOfPropertyChange(() => Total);
+            NotifyOfPropertyChange(() => CanCheckOut);
         }
+       
+
         public bool CanCheckOut
         {
             get
             {
                 bool output = false;
+                if (Cart.Count > 0)
+                {
+                    output = true;
+                }
 
                 return output;
             }
         }
 
+        public async Task CheckOut()
+        {
+            SaleModel sale = new SaleModel();
+            foreach (var item in Cart)
+            {
+                sale.SaleDetails.Add(new SaleDetailModel
+                {
+                    ProductId = item.Product.Id,
+                    Quantity = item.QuantityInCart
+                });
+            }
+
+            await _saleEndpoint.PostSale(sale);
+        }
     }
 }
