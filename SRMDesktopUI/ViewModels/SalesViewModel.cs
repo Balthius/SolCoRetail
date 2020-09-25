@@ -1,7 +1,9 @@
-﻿using Caliburn.Micro;
+﻿using AutoMapper;
+using Caliburn.Micro;
 using SRMDesktopUI.Library.Api;
 using SRMDesktopUI.Library.Helpers;
 using SRMDesktopUI.Library.Models;
+using SRMDesktopUI.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,12 +19,15 @@ namespace SRMDesktopUI.ViewModels
         IProductEndpoint _productEndpoint;
         ISaleEndpoint _saleEndpoint;
         IConfigHelper _configHelper;
+        IMapper _mapper;
 
-        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper, ISaleEndpoint saleEndpoint)
+        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper,
+            ISaleEndpoint saleEndpoint, IMapper mapper)
         {
             _productEndpoint = productEndpoint;
             _configHelper = configHelper;
             _saleEndpoint = saleEndpoint;
+            _mapper = mapper;
         }
 
         protected override async void OnViewLoaded(object view)
@@ -38,11 +43,12 @@ namespace SRMDesktopUI.ViewModels
         private async Task LoadProducts()
         {
             var productList = await _productEndpoint.GetAll();
-            Products = new BindingList<ProductModel>(productList);
+            var products = _mapper.Map<List<ProductDisplayModel >> (productList);
+            Products = new BindingList<ProductDisplayModel>(products);
         }
-        private BindingList<ProductModel> _products;
+        private BindingList<ProductDisplayModel> _products;
 
-        public BindingList<ProductModel> Products
+        public BindingList<ProductDisplayModel> Products
         {
             get { return _products; }
             set 
@@ -53,9 +59,9 @@ namespace SRMDesktopUI.ViewModels
             }
         }
 
-        private ProductModel _selectedProduct;
+        private ProductDisplayModel _selectedProduct;
 
-        public ProductModel SelectedProduct
+        public ProductDisplayModel SelectedProduct
 
         {
             get { return _selectedProduct; }
@@ -68,8 +74,8 @@ namespace SRMDesktopUI.ViewModels
         }
 
 
-        private BindingList<CartItemModel> _cart = new BindingList<CartItemModel>();
-        public BindingList<CartItemModel> Cart
+        private BindingList<CartItemDisplayModel> _cart = new BindingList<CartItemDisplayModel>();
+        public BindingList<CartItemDisplayModel> Cart
         {
             get { return _cart; }
             set 
@@ -166,17 +172,15 @@ namespace SRMDesktopUI.ViewModels
 
         public void AddToCart()
         {
-            CartItemModel existingItem = Cart.FirstOrDefault(x => x.Product == SelectedProduct);
+            CartItemDisplayModel existingItem = Cart.FirstOrDefault(x => x.Product == SelectedProduct);
             if (existingItem != null)
             {
                 existingItem.QuantityInCart += ItemQuantity;
-                //this is a hack to refresh art display
-                Cart.Remove(existingItem);
-                Cart.Add(existingItem);
+               
             }
             else
             {
-                CartItemModel item = new CartItemModel()
+                CartItemDisplayModel item = new CartItemDisplayModel()
                 {
                     Product = SelectedProduct,
                     QuantityInCart = ItemQuantity
