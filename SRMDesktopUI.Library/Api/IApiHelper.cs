@@ -9,6 +9,7 @@ namespace SRMDesktopUI.Library.Api
     {
         Task<AuthenticatedUser> Authenticate(string username, string password);
         Task GetLoggedInUserInfo(string token);
+        void LoggOffUser();
 
         HttpClient ApiClient { get; }
     }

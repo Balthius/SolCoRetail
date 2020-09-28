@@ -1,4 +1,4 @@
-﻿
+﻿ 
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -61,6 +61,11 @@ namespace SRMDesktopUI.Library.Api
                     throw new Exception(response.ReasonPhrase);
                 }
             }
+        }
+
+        public void LoggOffUser()
+        {
+            _apiClient.DefaultRequestHeaders.Clear();
         }
 
         public async Task GetLoggedInUserInfo(string token)
