@@ -54,6 +54,7 @@ namespace SRMDataManager.Library.Internal.DataAccess
             _transaction = _connection.BeginTransaction();
 
         }
+        //this is a potentially dangerous way to go, this is a good use-case though
         public List<T> LoadDataInTransaction<T, U>(string storedProcedure, U parameters)
         {
                 List<T> rows = _connection.Query<T>(storedProcedure, parameters,

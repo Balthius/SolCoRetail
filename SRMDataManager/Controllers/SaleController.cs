@@ -12,7 +12,7 @@ using TRMDataManager.Library.Models;
 namespace SRMDataManager.Controllers
 {
 
-    [Authorize]
+    //[Authorize]
     public class SaleController : ApiController
     {
         public void Post(SaleModel sale)
@@ -22,6 +22,13 @@ namespace SRMDataManager.Controllers
             data.SaveSale(sale, userId);
 
 
+        }
+        [Route("GetSalesReport")]
+        public List<SaleReportModel> GetSalesReport()
+        {
+            SaleData data = new SaleData();
+
+            return data.GetSaleReport();
         }
     }
 }
