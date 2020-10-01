@@ -11,10 +11,11 @@ using TRMDataManager.Library.Models;
 
 namespace SRMDataManager.Controllers
 {
-
-    //[Authorize]
+    [Authorize]
     public class SaleController : ApiController
     {
+
+        [Authorize(Roles = "Cashier")]
         public void Post(SaleModel sale)
         {
             SaleData data = new SaleData();
@@ -23,9 +24,13 @@ namespace SRMDataManager.Controllers
 
 
         }
+
+        [Authorize(Roles = "Admin, Manager")]
         [Route("GetSalesReport")]
         public List<SaleReportModel> GetSalesReport()
         {
+            //RequestContext.Principal.IsInRole("Admin"); can be used in an if statement to lock down portions of a method to certain roles
+
             SaleData data = new SaleData();
 
             return data.GetSaleReport();

@@ -9,7 +9,7 @@ using SRMDataManager.Library.Models;
 
 namespace SRMDataManager.Controllers
 {   
-    [Authorize]
+    [Authorize(Roles = "Cashier")]
     public class ProductController : ApiController
     {
         public List<ProductModel> Get()
@@ -17,8 +17,6 @@ namespace SRMDataManager.Controllers
             ProductData data = new ProductData();
 
             return data.GetProducts();
-
         }
-
     }
 }
