@@ -48,6 +48,12 @@ namespace SRMDesktopUI.ViewModels
             TryClose();
         }
 
+        public void userManagement()
+        {
+            ActivateItem(IoC.Get<UserDisplayViewModel>());
+
+        }
+
 
         public void LogOut()
         {
