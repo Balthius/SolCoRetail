@@ -32,7 +32,7 @@ namespace SRMDesktopUI.Library.Api
         }
         private void InitializeClient()
         {
-            string api = ConfigurationManager.AppSettings["api"];
+            string api = ConfigurationManager.AppSettings["api"]; // needed system.config.configmanager in both wpf reg and library
 
             _apiClient = new HttpClient();
             _apiClient.BaseAddress = new Uri(api);
