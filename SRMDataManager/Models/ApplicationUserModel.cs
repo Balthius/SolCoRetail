@@ -11,4 +11,4 @@ namespace SRMDataManager.Models
         public string Email { get; set; }
         public Dictionary<string, string> Roles { get; set; } = new Dictionary<string, string>();
     }
-} 
+}

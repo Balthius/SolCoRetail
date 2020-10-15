@@ -9,7 +9,6 @@ using TRMDataManager.Library.Models;
 
 namespace SRMDataManager.Controllers
 {
-    [Authorize]
     public class InventoryController : ApiController
     {
 
