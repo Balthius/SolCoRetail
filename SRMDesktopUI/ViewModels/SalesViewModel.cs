@@ -53,16 +53,15 @@ namespace SRMDesktopUI.ViewModels
                 //var info = IoC.Get<StatusInfoViewModel>(); creates a new copy rather than overwriting the one copy in the constructor. its an option
                 if(ex.Message == "Unauthorized")
                 {
-                    _status.UpdateMessage("Unauth", "Ya goofed");
-                    _window.ShowDialog(_status, null, settings);
+                    _status.UpdateMessage("Unauth", "Ya goofed, get authorized");
+                   await _window.ShowDialogAsync(_status, null, settings);
                 }
                 else
                 { 
-
                     _status.UpdateMessage("Fatal Exception", ex.Message);
-                    _window.ShowDialog(_status, null, settings);
+                    await _window.ShowDialogAsync(_status, null, settings);
                 }
-                TryClose();
+                TryCloseAsync();
             }
         }
 

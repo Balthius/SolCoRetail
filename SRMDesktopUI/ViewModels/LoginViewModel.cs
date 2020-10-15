@@ -7,13 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using SRMDesktopUI.Library.Api;
 using SRMDesktopUI.EventModels;
+using System.Threading;
 
 namespace SRMDesktopUI.ViewModels
 {
     public class LoginViewModel :Screen
     {
-        private string _userName = "josh.folsom@yahoo.com"; //this is TEMPORARY. use this only for testing
-        private string _password = "asuspepper77"; // do NOT let this go to production. and even if this did make it to production these value should not be valid
+        //private string _userName = "josh.folsom@yahoo.com"; //this is TEMPORARY. use this only for testing
+        //private string _password = "asuspepper77"; // do NOT let this go to production. and even if this did make it to production these value should not be valid
+        private string _userName = "josh@solco.com"; //this is TEMPORARY. use this only for testing
+        private string _password = "Passw0rd#7"; // do NOT let this go to production. and even if this did make it to production these value should not be valid
         private IApiHelper _apiHelper;
         private IEventAggregator _events;
         public LoginViewModel(IApiHelper apiHelper, IEventAggregator events)
@@ -95,7 +98,7 @@ namespace SRMDesktopUI.ViewModels
                 var result = await _apiHelper.Authenticate(UserName, Password);
                 await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
 
-                _events.PublishOnUIThread(new LogOnEvent());
+                await _events.PublishOnUIThreadAsync(new LogOnEvent(), new CancellationToken());
             }
             catch (Exception ex)
             {

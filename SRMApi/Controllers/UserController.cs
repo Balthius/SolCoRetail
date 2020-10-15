@@ -42,7 +42,7 @@ namespace SRMApi.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        [Route("api/uUser/Admin/GetAllUsers")]  
+        [Route("Admin/GetAllUsers")]  
         public List<ApplicationUserModel> GetAllUsers()
         {
             List<ApplicationUserModel> output = new List<ApplicationUserModel>();
@@ -68,7 +68,7 @@ namespace SRMApi.Controllers
         
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        [Route("api/uUser/Admin/GetAllRoles")]
+        [Route("Admin/GetAllRoles")]
         public Dictionary<string, string> GetAllRoles()
         {
          
@@ -80,7 +80,7 @@ namespace SRMApi.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        [Route("api/uUser/Admin/AddRole")]
+        [Route("Admin/AddRole")]
         public async Task AddARole(UserRolePairModel pairing)
         {
             var user = await _userManager.FindByIdAsync(pairing.UserId);
@@ -89,7 +89,7 @@ namespace SRMApi.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        [Route("api/uUser/Admin/RemoveRole")]
+        [Route("Admin/RemoveRole")]
         public async Task RemoveARole(UserRolePairModel pairing)
         {
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using SRMDesktopUI.EventModels;
@@ -25,8 +26,8 @@ namespace SRMDesktopUI.ViewModels
             _user = user;
             _apiHelper = apiHelper;
 
-            _events.Subscribe(this);
-            ActivateItem(IoC.Get<LoginViewModel>());
+            _events.SubscribeOnPublishedThread(this);
+            ActivateItemAsync(IoC.Get<LoginViewModel>(), new CancellationToken());
         }
 
         public bool IsLoggedIn
@@ -45,26 +46,27 @@ namespace SRMDesktopUI.ViewModels
 
         public void ExitApplication()
         {
-            TryClose();
+            TryCloseAsync();
         }
 
-        public void userManagement()
+        public async Task userManagement()
         {
-            ActivateItem(IoC.Get<UserDisplayViewModel>());
+            await ActivateItemAsync(IoC.Get<UserDisplayViewModel>(), new CancellationToken());
 
         }
 
 
-        public void LogOut()
+        public async Task LogOut()
         {
             _user.ResetUserModel();
-            _apiHelper.LoggOffUser();
-            ActivateItem(IoC.Get<LoginViewModel>());
+            _apiHelper.LogOffUser();
+            await ActivateItemAsync(IoC.Get<LoginViewModel>(), new CancellationToken());
             NotifyOfPropertyChange(() => IsLoggedIn);
         }
-        public void Handle(LogOnEvent message)
+
+        public async Task HandleAsync(LogOnEvent message, CancellationToken cancellationToken)
         {
-            ActivateItem(_salesVM);
+            await ActivateItemAsync(_salesVM, cancellationToken);
             NotifyOfPropertyChange(() => IsLoggedIn);
         }
     }
