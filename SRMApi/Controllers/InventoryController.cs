@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using TRMDataManager.Library.DataAccess;
-using TRMDataManager.Library.Models;
+using SRMDataManager.Library.DataAccess;
+using SRMDataManager.Library.Models;
 
 namespace SRMApi.Controllers
 {

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TRMDataManager.Library\SRMDataManager.Library.csproj" />
+    <ProjectReference Include="..\SRMDataManager.Library\SRMDataManager.Library.csproj" />
   </ItemGroup>
 
 </Project>

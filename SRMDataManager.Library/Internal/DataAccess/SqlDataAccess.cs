@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,13 +12,14 @@ using System.Threading.Tasks;
 
 namespace SRMDataManager.Library.Internal.DataAccess
 {
-    internal class SqlDataAccess : IDisposable
+    public class SqlDataAccess : IDisposable, ISqlDataAccess
     {
-
-        public SqlDataAccess(IConfiguration config)
+        public SqlDataAccess(IConfiguration config, ILogger<SqlDataAccess> logger)
         {
             _config = config;
+            _logger = logger;
         }
+
         public string GetConnectionString(string name)
         {
             return _config.GetConnectionString(name);
@@ -35,6 +37,7 @@ namespace SRMDataManager.Library.Internal.DataAccess
                 return rows;
             }
         }
+
         public void SaveData<T>(string storedProcedure, T parameters, string connectionStringName)
         {
             string connectionString = GetConnectionString(connectionStringName);
@@ -42,14 +45,12 @@ namespace SRMDataManager.Library.Internal.DataAccess
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 connection.Execute(storedProcedure, parameters,
-                   commandType: CommandType.StoredProcedure);
-
+                    commandType: CommandType.StoredProcedure);
             }
         }
 
         private IDbConnection _connection;
         private IDbTransaction _transaction;
-        private IConfiguration _config;
 
         public void StartTransaction(string connectionStringName)
         {
@@ -60,36 +61,59 @@ namespace SRMDataManager.Library.Internal.DataAccess
 
             _transaction = _connection.BeginTransaction();
 
+            isClosed = false;
         }
-        //this is a potentially dangerous way to go, this is a good use-case though
+
         public List<T> LoadDataInTransaction<T, U>(string storedProcedure, U parameters)
         {
-                List<T> rows = _connection.Query<T>(storedProcedure, parameters,
-                    commandType: CommandType.StoredProcedure, transaction: _transaction).ToList();
+            List<T> rows = _connection.Query<T>(storedProcedure, parameters,
+                commandType: CommandType.StoredProcedure, transaction: _transaction).ToList();
 
-                return rows;
+            return rows;
         }
+
         public void SaveDataInTransaction<T>(string storedProcedure, T parameters)
         {
-
             _connection.Execute(storedProcedure, parameters,
-               commandType: CommandType.StoredProcedure, transaction: _transaction);
-
+                    commandType: CommandType.StoredProcedure, transaction: _transaction);
         }
+
+        private bool isClosed = false;
+        private readonly IConfiguration _config;
+        private readonly ILogger<SqlDataAccess> _logger;
+
         public void CommitTransaction()
         {
             _transaction?.Commit();
             _connection?.Close();
+
+            isClosed = true;
         }
+
         public void RollbackTransaction()
         {
             _transaction?.Rollback();
             _connection?.Close();
+
+            isClosed = true;
         }
 
         public void Dispose()
         {
-            CommitTransaction();
+            if (isClosed == false)
+            {
+                try
+                {
+                    CommitTransaction();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Commit transaction failed in the dispose method.");
+                }
+            }
+
+            _transaction = null;
+            _connection = null;
         }
     }
 }

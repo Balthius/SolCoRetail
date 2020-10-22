@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TRMDataManager.Library.Models
+namespace SRMDataManager.Library.Models
 {
-    class SaleDetailDBModel
+    public class SaleDetailDBModel
     {
-        //this will be used to isnert into the stored procedure
         public int SaleId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
