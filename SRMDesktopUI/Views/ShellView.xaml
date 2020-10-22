@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SRMDesktopUI.Views"
-        mc:Ignorable="d"
+        mc:Ignorable="d" FontSize="18"
         Title="ShellView" Height="600" Width="1000">
     <DockPanel>
         <Menu DockPanel.Dock="Top" FontSize="18">
@@ -14,13 +14,9 @@
             <MenuItem Header="_Users">
                 <MenuItem x:Name="UserManagement" Header="User_Management" />
             </MenuItem>
-
-
             <MenuItem Header="_Account" Visibility="{Binding IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
-                <MenuItem x:Name="LogOut" Header="_Log Out"/>
+                <MenuItem x:Name="LogOut" Header="_Log Out" />
             </MenuItem>
-
-
         </Menu>
         <Grid>
             <ContentControl x:Name="ActiveItem" Margin="20 5 20 20" />

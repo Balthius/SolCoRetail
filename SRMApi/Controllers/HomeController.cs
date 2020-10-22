@@ -16,7 +16,9 @@ namespace SRMApi.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public HomeController(ILogger<HomeController> logger, 
+            RoleManager<IdentityRole> roleManager,
+            UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _roleManager = roleManager;
@@ -31,22 +33,25 @@ namespace SRMApi.Controllers
         public async Task<IActionResult> Privacy()
         {
             //string[] roles = { "Admin", "Manager", "Cashier" };
+
             //foreach (var role in roles)
             //{
             //    var roleExist = await _roleManager.RoleExistsAsync(role);
-            //    if(!roleExist)
+
+            //    if (roleExist == false)
             //    {
-            //        await _roleManager.CreateAsync(new IdentityRole(role)); 
+            //        await _roleManager.CreateAsync(new IdentityRole(role));
             //    }
             //}
 
-            //var user = await _userManager.FindByEmailAsync("josh.folsom@yahoo.com");
+            //var user = await _userManager.FindByEmailAsync("tim@iamtimcorey.com");
 
-            //if(user != null)
+            //if (user != null)
             //{
             //    await _userManager.AddToRoleAsync(user, "Admin");
             //    await _userManager.AddToRoleAsync(user, "Cashier");
             //}
+
             return View();
         }
 

@@ -1,26 +1,29 @@
 ﻿using Caliburn.Micro;
-using SRMDesktopUI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using SRMDesktopUI.Library.Api;
 using SRMDesktopUI.EventModels;
+using SRMDesktopUI.Helpers;
+using SRMDesktopUI.Library.Api;
 
 namespace SRMDesktopUI.ViewModels
 {
-    public class LoginViewModel :Screen
+    public class LoginViewModel : Screen
     {
-        private string _userName = "josh.folsom@yahoo.com"; //this is TEMPORARY. use this only for testing
-        private string _password = "asuspepper77"; // do NOT let this go to production. and even if this did make it to production these value should not be valid
-        private IApiHelper _apiHelper;
+        private string _userName = "gerikx7@gmail.com";
+        private string _password = "Vkzn54tg!";
+        private IAPIHelper _apiHelper;
         private IEventAggregator _events;
-        public LoginViewModel(IApiHelper apiHelper, IEventAggregator events)
+
+        public LoginViewModel(IAPIHelper apiHelper, IEventAggregator events)
         {
             _apiHelper = apiHelper;
             _events = events;
         }
+
         public string UserName
         {
             get { return _userName; }
@@ -42,13 +45,13 @@ namespace SRMDesktopUI.ViewModels
                 NotifyOfPropertyChange(() => CanLogIn);
             }
         }
-
-
+        
         public bool IsErrorVisible
         {
-            get 
+            get
             {
                 bool output = false;
+
                 if (ErrorMessage?.Length > 0)
                 {
                     output = true;
@@ -57,7 +60,6 @@ namespace SRMDesktopUI.ViewModels
                 return output;
             }
         }
-
 
         private string _errorMessage;
 
@@ -78,24 +80,27 @@ namespace SRMDesktopUI.ViewModels
             get
             {
                 bool output = false;
-                //this should validate user and pass. p-length needs to be checked from one central location 
-                if(UserName?.Length > 0 && Password?.Length > 0)
+
+                if (UserName?.Length > 0 && Password?.Length > 0)
                 {
                     output = true;
                 }
+
                 return output;
             }
         }
 
-        public async Task LogIn ()
+        public async Task LogIn()
         {
             try
             {
                 ErrorMessage = "";
                 var result = await _apiHelper.Authenticate(UserName, Password);
+
+                // Capture more information about the user
                 await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
 
-                _events.PublishOnUIThread(new LogOnEvent());
+                await _events.PublishOnUIThreadAsync(new LogOnEvent(), new CancellationToken());
             }
             catch (Exception ex)
             {

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SRMDesktopUI.Library.Models
+namespace SRMDesktopUI.Models
 {
     public class AuthenticatedUser
     {
         public string Access_Token { get; set; }
-        public string User_name { get; set; }
+        public string UserName { get; set; }
     }
 }

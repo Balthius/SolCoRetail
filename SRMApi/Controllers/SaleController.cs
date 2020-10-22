@@ -23,24 +23,23 @@ namespace SRMApi.Controllers
         {
             _config = config;
         }
+
         [Authorize(Roles = "Cashier")]
+        [HttpPost]
         public void Post(SaleModel sale)
         {
             SaleData data = new SaleData(_config);
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);// RequestContext.Principal.Identity.GetUserId();
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // old way - RequestContext.Principal.Identity.GetUserId();
+
             data.SaveSale(sale, userId);
-
-
         }
 
-        [Authorize(Roles = "Admin, Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         [Route("GetSalesReport")]
+        [HttpGet]
         public List<SaleReportModel> GetSalesReport()
         {
-            //RequestContext.Principal.IsInRole("Admin"); can be used in an if statement to lock down portions of a method to certain roles
-
-            SaleData data = new SaleData();
-
+            SaleData data = new SaleData(_config);
             return data.GetSaleReport();
         }
     }

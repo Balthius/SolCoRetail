@@ -1,18 +1,18 @@
-﻿using SRMDesktopUI.Library.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using SRMDesktopUI.Library.Models;
 
 namespace SRMDesktopUI.Library.Api
 {
     public class ProductEndpoint : IProductEndpoint
     {
-        private IApiHelper _apiHelper;
+        private IAPIHelper _apiHelper;
 
-        public ProductEndpoint(IApiHelper apiHelper)
+        public ProductEndpoint(IAPIHelper apiHelper)
         {
             _apiHelper = apiHelper;
         }
@@ -25,7 +25,6 @@ namespace SRMDesktopUI.Library.Api
                 {
                     var result = await response.Content.ReadAsAsync<List<ProductModel>>();
                     return result;
-
                 }
                 else
                 {

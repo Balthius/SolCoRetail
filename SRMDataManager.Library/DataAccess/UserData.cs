@@ -9,18 +9,22 @@ using SRMDataManager.Library.Models;
 
 namespace SRMDataManager.Library.DataAccess
 {
-    public class UserData : IUserData
+    public class UserData
     {
-        private readonly ISqlDataAccess _sql;
+        private readonly IConfiguration _config;
 
-        public UserData(ISqlDataAccess sql)
+        public UserData(IConfiguration config)
         {
-            _sql = sql;
+            _config = config;
         }
 
         public List<UserModel> GetUserById(string Id)
         {
-            var output = _sql.LoadData<UserModel, dynamic>("dbo.spUserLookup", new { Id }, "TRMData");
+            SqlDataAccess sql = new SqlDataAccess(_config);
+
+            var p = new { Id = Id };
+
+            var output = sql.LoadData<UserModel, dynamic>("dbo.spUserLookup", p, "SRMData");
 
             return output;
         }

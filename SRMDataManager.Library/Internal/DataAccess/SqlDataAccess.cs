@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,12 +11,11 @@ using System.Threading.Tasks;
 
 namespace SRMDataManager.Library.Internal.DataAccess
 {
-    public class SqlDataAccess : IDisposable, ISqlDataAccess
+    internal class SqlDataAccess : IDisposable
     {
-        public SqlDataAccess(IConfiguration config, ILogger<SqlDataAccess> logger)
+        public SqlDataAccess(IConfiguration config)
         {
             _config = config;
-            _logger = logger;
         }
 
         public string GetConnectionString(string name)
@@ -31,7 +29,7 @@ namespace SRMDataManager.Library.Internal.DataAccess
 
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
-                List<T> rows = connection.Query<T>(storedProcedure, parameters,
+                List<T> rows = connection.Query<T>(storedProcedure, parameters, 
                     commandType: CommandType.StoredProcedure).ToList();
 
                 return rows;
@@ -80,7 +78,6 @@ namespace SRMDataManager.Library.Internal.DataAccess
 
         private bool isClosed = false;
         private readonly IConfiguration _config;
-        private readonly ILogger<SqlDataAccess> _logger;
 
         public void CommitTransaction()
         {
@@ -106,14 +103,20 @@ namespace SRMDataManager.Library.Internal.DataAccess
                 {
                     CommitTransaction();
                 }
-                catch (Exception ex)
+                catch
                 {
-                    _logger.LogError(ex, "Commit transaction failed in the dispose method.");
+                    // TODO - Log this issue
                 }
             }
 
             _transaction = null;
             _connection = null;
         }
+
+        // Open connect/start transaction method
+        // load using the transaction
+        // save using the transaction
+        // Close connection/stop transaction method
+        // Dispose
     }
 }

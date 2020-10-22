@@ -18,10 +18,9 @@ namespace SRMDesktopUI.Models
         public int QuantityInStock
         {
             get { return _quantityInStock; }
-            set 
-            { 
+            set
+            {
                 _quantityInStock = value;
-
                 CallPropertyChanged(nameof(QuantityInStock));
             }
         }
@@ -31,7 +30,6 @@ namespace SRMDesktopUI.Models
         public event PropertyChangedEventHandler PropertyChanged;
         public void CallPropertyChanged(string propertyName)
         {
-            //This (and above event) are .net, not caliburn micro, so they can be used w/o needing caliburn micro
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }

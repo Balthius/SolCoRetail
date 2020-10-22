@@ -10,7 +10,5 @@ namespace SRMDesktopUI.Library.Models
     {
         public ProductModel Product { get; set; }
         public int QuantityInCart { get; set; }
-
-    
     }
 }

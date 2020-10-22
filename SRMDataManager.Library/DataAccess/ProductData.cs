@@ -9,25 +9,29 @@ using SRMDataManager.Library.Models;
 
 namespace SRMDataManager.Library.DataAccess
 {
-    public class ProductData : IProductData
+    public class ProductData
     {
-        private readonly ISqlDataAccess _sql;
+        private readonly IConfiguration _config;
 
-        public ProductData(ISqlDataAccess sql)
+        public ProductData(IConfiguration config)
         {
-            _sql = sql;
+            _config = config;
         }
 
         public List<ProductModel> GetProducts()
         {
-            var output = _sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetAll", new { }, "TRMData");
+            SqlDataAccess sql = new SqlDataAccess(_config);
+            
+            var output = sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetAll", new { }, "SRMData");
 
             return output;
         }
 
         public ProductModel GetProductById(int productId)
         {
-            var output = _sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetById", new { Id = productId }, "TRMData").FirstOrDefault();
+            SqlDataAccess sql = new SqlDataAccess(_config);
+
+            var output = sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetById", new { Id = productId }, "SRMData").FirstOrDefault();
 
             return output;
         }

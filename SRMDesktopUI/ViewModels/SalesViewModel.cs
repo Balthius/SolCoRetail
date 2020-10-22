@@ -1,9 +1,5 @@
 ﻿using AutoMapper;
 using Caliburn.Micro;
-using SRMDesktopUI.Library.Api;
-using SRMDesktopUI.Library.Helpers;
-using SRMDesktopUI.Library.Models;
-using SRMDesktopUI.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,25 +8,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using SRMDesktopUI.Library.Api;
+using SRMDesktopUI.Library.Helpers;
+using SRMDesktopUI.Library.Models;
+using SRMDesktopUI.Models;
 
 namespace SRMDesktopUI.ViewModels
 {
     public class SalesViewModel : Screen
     {
-        //Injected dependencies
         IProductEndpoint _productEndpoint;
         ISaleEndpoint _saleEndpoint;
         IConfigHelper _configHelper;
         IMapper _mapper;
-        StatusInfoViewModel _status;
-        IWindowManager _window;
+        private readonly StatusInfoViewModel _status;
+        private readonly IWindowManager _window;
 
-        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper,
+        public SalesViewModel(IProductEndpoint productEndpoint, IConfigHelper configHelper, 
             ISaleEndpoint saleEndpoint, IMapper mapper, StatusInfoViewModel status, IWindowManager window)
         {
             _productEndpoint = productEndpoint;
-            _configHelper = configHelper;
             _saleEndpoint = saleEndpoint;
+            _configHelper = configHelper;
             _mapper = mapper;
             _status = status;
             _window = window;
@@ -50,41 +49,36 @@ namespace SRMDesktopUI.ViewModels
                 settings.ResizeMode = ResizeMode.NoResize;
                 settings.Title = "System Error";
 
-                //var info = IoC.Get<StatusInfoViewModel>(); creates a new copy rather than overwriting the one copy in the constructor. its an option
-                if(ex.Message == "Unauthorized")
+                if (ex.Message == "Unauthorized")
                 {
-                    _status.UpdateMessage("Unauth", "Ya goofed");
-                    _window.ShowDialog(_status, null, settings);
+                    _status.UpdateMessage("Unauthorized Access", "You do not have permission to interact with the Sales Form.");
+                    await _window.ShowDialogAsync(_status, null, settings);
                 }
                 else
-                { 
-
+                {
                     _status.UpdateMessage("Fatal Exception", ex.Message);
-                    _window.ShowDialog(_status, null, settings);
+                    await _window.ShowDialogAsync(_status, null, settings);
                 }
-                TryClose();
+
+                TryCloseAsync();
             }
         }
 
-        /// <summary>
-        /// cant be called in constructor, so this had to be split out in video 17. 1 hour mark
-        /// </summary>
-        /// <returns></returns>
         private async Task LoadProducts()
         {
             var productList = await _productEndpoint.GetAll();
-            var products = _mapper.Map<List<ProductDisplayModel >> (productList);
+            var products = _mapper.Map<List<ProductDisplayModel>>(productList);
             Products = new BindingList<ProductDisplayModel>(products);
         }
+
         private BindingList<ProductDisplayModel> _products;
 
         public BindingList<ProductDisplayModel> Products
         {
             get { return _products; }
-            set 
-            { 
+            set
+            {
                 _products = value;
-
                 NotifyOfPropertyChange(() => Products);
             }
         }
@@ -92,7 +86,6 @@ namespace SRMDesktopUI.ViewModels
         private ProductDisplayModel _selectedProduct;
 
         public ProductDisplayModel SelectedProduct
-
         {
             get { return _selectedProduct; }
             set
@@ -106,7 +99,7 @@ namespace SRMDesktopUI.ViewModels
         private async Task ResetSalesViewModel()
         {
             Cart = new BindingList<CartItemDisplayModel>();
-
+            // TODO - Add clearing the selectedCartItem if it does not do it itself
             await LoadProducts();
 
             NotifyOfPropertyChange(() => SubTotal);
@@ -115,11 +108,9 @@ namespace SRMDesktopUI.ViewModels
             NotifyOfPropertyChange(() => CanCheckOut);
         }
 
-
         private CartItemDisplayModel _selectedCartItem;
 
         public CartItemDisplayModel SelectedCartItem
-
         {
             get { return _selectedCartItem; }
             set
@@ -131,13 +122,13 @@ namespace SRMDesktopUI.ViewModels
         }
 
         private BindingList<CartItemDisplayModel> _cart = new BindingList<CartItemDisplayModel>();
+
         public BindingList<CartItemDisplayModel> Cart
         {
             get { return _cart; }
-            set 
+            set
             {
                 _cart = value;
-
                 NotifyOfPropertyChange(() => Cart);
             }
         }
@@ -147,10 +138,9 @@ namespace SRMDesktopUI.ViewModels
         public int ItemQuantity
         {
             get { return _itemQuantity; }
-            set 
-            { 
+            set
+            {
                 _itemQuantity = value;
-
                 NotifyOfPropertyChange(() => ItemQuantity);
                 NotifyOfPropertyChange(() => CanAddToCart);
             }
@@ -160,14 +150,14 @@ namespace SRMDesktopUI.ViewModels
         {
             get
             {
-                return CalculateSubtotal().ToString("C");
+                return CalculateSubTotal().ToString("C");
             }
-
         }
 
-        private decimal CalculateSubtotal()
+        private decimal CalculateSubTotal()
         {
             decimal subTotal = 0;
+
             foreach (var item in Cart)
             {
                 subTotal += (item.Product.RetailPrice * item.QuantityInCart);
@@ -176,23 +166,15 @@ namespace SRMDesktopUI.ViewModels
             return subTotal;
         }
 
-        public string Tax
-        {
-            get
-            {
-                return CalculateTax().ToString("C");
-            }
-
-        }
-
         private decimal CalculateTax()
         {
             decimal taxAmount = 0;
-            decimal taxRate = _configHelper.GetTaxRate() / 100;
+            decimal taxRate = _configHelper.GetTaxRate()/100;
 
             taxAmount = Cart
-                 .Where(x => x.Product.IsTaxable)
+                .Where(x => x.Product.IsTaxable)
                 .Sum(x => x.Product.RetailPrice * x.QuantityInCart * taxRate);
+
             //foreach (var item in Cart)
             //{
             //    if (item.Product.IsTaxable)
@@ -200,23 +182,36 @@ namespace SRMDesktopUI.ViewModels
             //        taxAmount += (item.Product.RetailPrice * item.QuantityInCart * taxRate);
             //    }
             //}
+
             return taxAmount;
+        }
+
+        public string Tax
+        {
+            get
+            {
+                return CalculateTax().ToString("C");
+            }
         }
 
         public string Total
         {
             get
             {
-                decimal total = CalculateSubtotal() + CalculateTax();
+                decimal total = CalculateSubTotal() + CalculateTax();
                 return total.ToString("C");
             }
-
         }
+
+
         public bool CanAddToCart
         {
             get
             {
                 bool output = false;
+
+                // Make sure something is selected
+                // Make sure there is an item quantity
                 if (ItemQuantity > 0 && SelectedProduct?.QuantityInStock >= ItemQuantity)
                 {
                     output = true;
@@ -229,14 +224,14 @@ namespace SRMDesktopUI.ViewModels
         public void AddToCart()
         {
             CartItemDisplayModel existingItem = Cart.FirstOrDefault(x => x.Product == SelectedProduct);
+
             if (existingItem != null)
             {
                 existingItem.QuantityInCart += ItemQuantity;
-               
             }
             else
             {
-                CartItemDisplayModel item = new CartItemDisplayModel()
+                CartItemDisplayModel item = new CartItemDisplayModel
                 {
                     Product = SelectedProduct,
                     QuantityInCart = ItemQuantity
@@ -251,22 +246,27 @@ namespace SRMDesktopUI.ViewModels
             NotifyOfPropertyChange(() => Total);
             NotifyOfPropertyChange(() => CanCheckOut);
         }
+
         public bool CanRemoveFromCart
         {
             get
             {
                 bool output = false;
-                if(SelectedCartItem != null && SelectedCartItem?.QuantityInCart > 0)
+
+                // Make sure something is selected
+                if (SelectedCartItem != null && SelectedCartItem?.QuantityInCart > 0)
                 {
                     output = true;
                 }
+
                 return output;
             }
         }
+
         public void RemoveFromCart()
         {
-
             SelectedCartItem.Product.QuantityInStock += 1;
+
             if (SelectedCartItem.QuantityInCart > 1)
             {
                 SelectedCartItem.QuantityInCart -= 1;
@@ -275,19 +275,21 @@ namespace SRMDesktopUI.ViewModels
             {
                 Cart.Remove(SelectedCartItem);
             }
+
             NotifyOfPropertyChange(() => SubTotal);
             NotifyOfPropertyChange(() => Tax);
             NotifyOfPropertyChange(() => Total);
             NotifyOfPropertyChange(() => CanCheckOut);
             NotifyOfPropertyChange(() => CanAddToCart);
         }
-       
 
         public bool CanCheckOut
         {
             get
             {
                 bool output = false;
+
+                // Make sure there is something in the cart
                 if (Cart.Count > 0)
                 {
                     output = true;
@@ -299,7 +301,9 @@ namespace SRMDesktopUI.ViewModels
 
         public async Task CheckOut()
         {
+            // Create a SaleModel and post to the API
             SaleModel sale = new SaleModel();
+
             foreach (var item in Cart)
             {
                 sale.SaleDetails.Add(new SaleDetailModel
@@ -310,6 +314,8 @@ namespace SRMDesktopUI.ViewModels
             }
 
             await _saleEndpoint.PostSale(sale);
+
+            await ResetSalesViewModel();
         }
     }
 }

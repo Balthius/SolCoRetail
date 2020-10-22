@@ -1,18 +1,18 @@
-﻿using SRMDesktopUI.Library.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using SRMDesktopUI.Library.Models;
 
 namespace SRMDesktopUI.Library.Api
 {
     public class UserEndpoint : IUserEndpoint
     {
-        private readonly IApiHelper _apiHelper;
+        private readonly IAPIHelper _apiHelper;
 
-        public UserEndpoint(IApiHelper apiHelper)
+        public UserEndpoint(IAPIHelper apiHelper)
         {
             _apiHelper = apiHelper;
         }
@@ -32,7 +32,8 @@ namespace SRMDesktopUI.Library.Api
                 }
             }
         }
-        public async Task<Dictionary<string,string>> GetAllRoles()
+
+        public async Task<Dictionary<string, string>> GetAllRoles()
         {
             using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync("/api/User/Admin/GetAllRoles"))
             {
@@ -51,25 +52,26 @@ namespace SRMDesktopUI.Library.Api
         public async Task AddUserToRole(string userId, string roleName)
         {
             var data = new { userId, roleName };
+
             using (HttpResponseMessage response = await _apiHelper.ApiClient.PostAsJsonAsync("/api/User/Admin/AddRole", data))
             {
                 if (response.IsSuccessStatusCode == false)
                 {
                     throw new Exception(response.ReasonPhrase);
                 }
-
             }
         }
+
         public async Task RemoveUserFromRole(string userId, string roleName)
         {
             var data = new { userId, roleName };
+
             using (HttpResponseMessage response = await _apiHelper.ApiClient.PostAsJsonAsync("/api/User/Admin/RemoveRole", data))
             {
                 if (response.IsSuccessStatusCode == false)
                 {
                     throw new Exception(response.ReasonPhrase);
                 }
-
             }
         }
     }

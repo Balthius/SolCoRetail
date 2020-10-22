@@ -1,11 +1,5 @@
 ﻿using AutoMapper;
 using Caliburn.Micro;
-using SRMDesktopUI.Helpers;
-using SRMDesktopUI.Library.Api;
-using SRMDesktopUI.Library.Helpers;
-using SRMDesktopUI.Library.Models;
-using SRMDesktopUI.Models;
-using SRMDesktopUI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,21 +7,27 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using SRMDesktopUI.Helpers;
+using SRMDesktopUI.Library.Api;
+using SRMDesktopUI.Library.Helpers;
+using SRMDesktopUI.Library.Models;
+using SRMDesktopUI.Models;
+using SRMDesktopUI.ViewModels;
 
 namespace SRMDesktopUI
 {
-    class Bootstrapper :BootstrapperBase
+    public class Bootstrapper : BootstrapperBase
     {
-
         private SimpleContainer _container = new SimpleContainer();
+
         public Bootstrapper()
         {
             Initialize();
 
             ConventionManager.AddElementConvention<PasswordBox>(
-                PasswordBoxHelper.BoundPasswordProperty,
-                "Password",
-                "PasswordChanged");
+            PasswordBoxHelper.BoundPasswordProperty,
+            "Password",
+            "PasswordChanged");
         }
 
         private IMapper ConfigureAutomapper()
@@ -39,12 +39,12 @@ namespace SRMDesktopUI
             });
 
             var output = config.CreateMapper();
-            return output;
 
+            return output;
         }
+
         protected override void Configure()
         {
-
             _container.Instance(ConfigureAutomapper());
 
             _container.Instance(_container)
@@ -57,13 +57,8 @@ namespace SRMDesktopUI
                 .Singleton<IEventAggregator, EventAggregator>()
                 .Singleton<ILoggedInUserModel, LoggedInUserModel>()
                 .Singleton<IConfigHelper, ConfigHelper>()
-                .Singleton<IApiHelper, ApiHelper>();
+                .Singleton<IAPIHelper, APIHelper>();
 
-
-
-            //in our assembly get every type, that is a class, that ends in viewmodel, put it in a list, and then for each one
-            //register each one to a container
-            //auto-wires up all viewmodels. makes unit testing a little harder. good way to start though (MVP)
             GetType().Assembly.GetTypes()
                 .Where(type => type.IsClass)
                 .Where(type => type.Name.EndsWith("ViewModel"))
@@ -71,6 +66,7 @@ namespace SRMDesktopUI
                 .ForEach(viewModelType => _container.RegisterPerRequest(
                     viewModelType, viewModelType.ToString(), viewModelType));
         }
+
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
             DisplayRootViewFor<ShellViewModel>();

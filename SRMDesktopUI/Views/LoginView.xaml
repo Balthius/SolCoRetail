@@ -22,27 +22,34 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 0 0 20"
-                   HorizontalAlignment="Center" FontSize="64" FontFamily="Segoe UI Light" Text="Login Form"/>
-        
-        <!--Error Message Row-->
-        <TextBlock x:Name="ErrorMessage" Grid.Row="1" Grid.Column="1"
-                   Grid.ColumnSpan="2" Foreground="Red" Margin="0 0 0 20"
-                   MaxWidth="300" TextWrapping="Wrap" Visibility="{Binding IsErrorVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
-            
+                   HorizontalAlignment="Center" FontSize="64" FontFamily="Segoe UI Light">
+            Login Form
         </TextBlock>
         
-        <!--Username row-->
-        <TextBlock Grid.Row="2" Grid.Column="1" Margin="0 0 5 10" Text="Username:"/>
-        <TextBox x:Name="UserName" Grid.Row="2" Grid.Column="2" MinWidth="350" 
-                 Margin="0 0 0 10"/>
-        <!--Password row-->
-        <TextBlock Grid.Row="3" Grid.Column="1" Margin="0 0 5 20" Text="Password:"/>
-        <PasswordBox x:Name="Password" Grid.Row="3" Grid.Column="2" MinWidth="350" 
-                 Margin="0 0 0 10"/>
+        <!-- Error Message row -->
+        <TextBlock x:Name="ErrorMessage" Visibility="{Binding IsErrorVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                   Foreground="Red" MaxWidth="300"
+                   TextWrapping="Wrap" Margin="0 0 0 20"
+                   />
 
-        <!--Login row-->
+        <!-- Username row -->
+        <TextBlock Grid.Row="2" Grid.Column="1" Margin="0 0 5 10">
+            Username: 
+        </TextBlock>
+        <TextBox x:Name="UserName" Grid.Row="2" Grid.Column="2" MinWidth="350" 
+                 Margin="0 0 0 10" />
+        
+        <!-- Password row -->
+        <TextBlock Grid.Row="3" Grid.Column="1" Margin="0 0 5 20">
+            Password:
+        </TextBlock>
+        <PasswordBox x:Name="Password" Grid.Row="3" Grid.Column="2" MinWidth="350" 
+                 Margin="0 0 0 20" />
+        
+        <!-- Login row -->
         <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Padding="20 5"
-                HorizontalAlignment="Center" x:Name="Login">
+                HorizontalAlignment="Center" x:Name="LogIn">
             Log In
         </Button>
     </Grid>

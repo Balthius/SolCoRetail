@@ -13,7 +13,7 @@ namespace SRMApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Cashier")]
     public class ProductController : ControllerBase
     {
         private readonly IConfiguration _config;
@@ -22,6 +22,8 @@ namespace SRMApi.Controllers
         {
             _config = config;
         }
+
+        [HttpGet]
         public List<ProductModel> Get()
         {
             ProductData data = new ProductData(_config);
