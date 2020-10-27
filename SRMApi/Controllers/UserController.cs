@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SRMApi.Data;
 using SRMApi.Models;
 using SRMDataManager.Library.DataAccess;
@@ -23,24 +24,25 @@ namespace SRMApi.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly IConfiguration _config;
+        private readonly IUserData _userData;
+        private readonly ILogger<UserController> logger;
 
         public UserController(ApplicationDbContext context, 
             UserManager<IdentityUser> userManager,
-            IConfiguration config)
+            IUserData userData,
+            ILogger<UserController> logger)
         {
             _context = context;
             _userManager = userManager;
-            _config = config;
+            _userData = userData;
+            this.logger = logger;
         }
 
         [HttpGet]
         public UserModel GetById()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            UserData data = new UserData(_config);
-
-            return data.GetUserById(userId).First();
+            return _userData.GetUserById(userId).First();
         }
 
         [Authorize(Roles = "Admin")]
@@ -65,10 +67,6 @@ namespace SRMApi.Controllers
 
                 u.Roles = userRoles.Where(x => x.UserId == u.Id).ToDictionary(key => key.RoleId, val => val.Name);
 
-                //foreach (var r in user.Roles)
-                //{
-                //    u.Roles.Add(r.RoleId, roles.Where(x => x.Id == r.RoleId).First().Name);
-                //}
 
                 output.Add(u);
             }
@@ -91,7 +89,14 @@ namespace SRMApi.Controllers
         [Route("Admin/AddRole")]
         public async Task AddARole(UserRolePairModel pairing)
         {
+
+            string loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var user = await _userManager.FindByIdAsync(pairing.UserId);
+
+            logger.LogInformation("Admin {Admin} added user {User} to role {Role}",
+                                        loggedInUserId, user.Id, pairing.RoleName);
+
             await _userManager.AddToRoleAsync(user, pairing.RoleName);
         }
 
@@ -100,7 +105,13 @@ namespace SRMApi.Controllers
         [Route("Admin/RemoveRole")]
         public async Task RemoveARole(UserRolePairModel pairing)
         {
+
+            string loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var user = await _userManager.FindByIdAsync(pairing.UserId);
+
+            logger.LogInformation("Admin {Admin} removed user {User} from role {Role}",
+                                        loggedInUserId, user.Id, pairing.RoleName);
             await _userManager.RemoveFromRoleAsync(user, pairing.RoleName);
         }
     }

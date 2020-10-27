@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRMDataManager", "SRMDataManager\SRMDataManager.csproj", "{7781527B-7132-4BB7-8657-814806876BBD}"
-EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SRMData", "SRMData\SRMData.sqlproj", "{A222CD6A-CEAE-4D7C-9F22-55B1BEBFDB6D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRMDesktopUI", "SRMDesktopUI\SRMDesktopUI.csproj", "{AB3D5598-DCFC-4133-8B71-146339292ADB}"
@@ -21,16 +19,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRMApi", "SRMApi\SRMApi.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRMDataManager.Library", "SRMDataManager.Library\SRMDataManager.Library.csproj", "{F2AE8FE1-D516-437C-A209-04219D3FC64E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FF33957A-C631-4322-8FAD-51B678355EAC}"
+	ProjectSection(SolutionItems) = preProject
+		Roadmap.txt = Roadmap.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7781527B-7132-4BB7-8657-814806876BBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7781527B-7132-4BB7-8657-814806876BBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7781527B-7132-4BB7-8657-814806876BBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7781527B-7132-4BB7-8657-814806876BBD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A222CD6A-CEAE-4D7C-9F22-55B1BEBFDB6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A222CD6A-CEAE-4D7C-9F22-55B1BEBFDB6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A222CD6A-CEAE-4D7C-9F22-55B1BEBFDB6D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -58,7 +57,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7781527B-7132-4BB7-8657-814806876BBD} = {DCDB81D5-94E7-46B4-95C4-BEE560C7228C}
 		{A222CD6A-CEAE-4D7C-9F22-55B1BEBFDB6D} = {CC5F11BB-5333-49F5-B15C-2D1943C69FC3}
 		{AB3D5598-DCFC-4133-8B71-146339292ADB} = {32D55B43-01DC-4D63-901F-EE0102A8BEC0}
 		{97722080-7B35-4EA5-A749-0A481ACD37A1} = {32D55B43-01DC-4D63-901F-EE0102A8BEC0}
